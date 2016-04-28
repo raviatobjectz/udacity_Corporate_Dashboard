@@ -1,0 +1,437 @@
+
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="icons/planner.ico" />
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
+  <script src="js/focusIf.min.js"></script>
+  <script src="js/app.js"></script>
+  <title>Event Planner</title>
+  <style>
+  input, textarea {
+    max-width:100%
+  }
+</style>
+
+</head>
+<body ng-app="EventPlanner" ng-controller="allTabs">
+  <md-toolbar>
+   <div class="md-toolbar-tools" layout-align="center center">
+      <i class="material-icons">event</i> &nbsp Event Planner
+  </div>
+</md-toolbar>
+  <md-content>
+    <md-tabs md-selected="selectedIndex" md-dynamic-height md-border-bottom md-stretch-tabs="auto">
+        <md-tab label="{{tabHeading1}}">
+            <md-content class="md-padding">
+            <form name="projectForm">
+
+              <div layout-gt-sm="row" ng-hide="login">
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="username">Username *</label>
+                  <input focus-if="selectedIndex == 0" focus-delay="500" id="username" name="dingname" type="text" ng-model="user.username" ng-pattern="/^([a-z\s]{4,8})$/" required />
+                  <div ng-messages="projectForm.dingname.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      Username must have a minimum of 4 and maximum of 8 lower case characters only
+                    </div>
+                  </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="password">Password *</label>
+                  <input id="password" name="password" type="password" ng-model="user.password" ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/" required>
+                  <div ng-messages="projectForm.password.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character:
+                    </div>
+                  </div>
+                </md-input-container>
+                <md-input-container ng-show="varB" class="md-block" flex-gt-sm>
+                  <label for="confirmPassword">{{user.password==user.confirmPassword?"Passwords Match":"Passwords Dont Match"}} * </label>
+                  <input id="confirmPassword" name="confirmPassword" type="password" ng-model="user.confirmPassword" required>
+                </md-input-container>
+              </div>
+
+              <div layout-gt-sm="row" ng-show="varB">
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="given-name">Firstname *</label>
+                  <input id="given-name" name="given-name" type="text" ng-model="user.firstname" ng-pattern="/^([A-Za-z\s]{1,20})$/" required/>
+                  <div ng-messages="projectForm.given-name.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      First name is required and can only contain characters and must be anywhere between 1 and 20 in length
+                    </div>
+                  </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="lastname">Lastname *</label>
+                  <input id="lastname" name="lastname" type="text" ng-model="user.lastname" ng-pattern="/^([A-Za-z\s]{1,20})$/" required />
+                  <div ng-messages="projectForm.lastname.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      Last name is required and can only contain characters and must be anywhere between 1 and 20 in length
+                    </div>
+                  </div>
+                </md-input-container>
+
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="email">Email *</label>
+                  <input id="email" required type="email" name="email" ng-model="user.email"
+                         minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+                  <div ng-messages="projectForm.email.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                      Your email must be between 10 and 100 characters long and look like an e-mail address.
+                    </div>
+                  </div>
+                </md-input-container>
+              </div>
+
+              <div layout-gt-sm="row" ng-show="varB">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="street-address">Address</label>
+                  <input id="street-address" ng-model="user.address" name="street-address"/>
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label for="city">City</label>
+                  <input id="city" ng-model="user.city" name="city"/>
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label for="state">State</label>
+                  <input id="state" list="eventstate" name="state" ng-model="user.state"/>
+                  <datalist id="eventstate">
+                    <option data-ng-repeat="state in states" value="{{state.abbrev}}">
+                  </datalist>
+                </md-input-container>
+              </div>
+
+              <div layout-gt-sm="row" ng-show="varB">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="phone">Phone Number</label>
+                  <input id="phone" name="phone" type="tel" ng-model="user.phone" ng-pattern="/^[1-9][0-9]{0,2}-[0-9]{3}-[0-9]{4}$/">
+                  <div ng-messages="projectForm.phone.$error" md-auto-hide="true">
+                    <div ng-message="pattern">
+                      Phone number must be xxx-xxx-xxxx
+                    </div>
+                  </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="dateofbirth">Birthday(Only Month and Date matters)</label>
+                  <input id="dateofbirth" type="date" ng-model="user.dateofbirth">
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="employer">Employer</label>
+                  <input id="employer" type="text" ng-model="user.employer">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="job">Job Title</label>
+                  <input id="job" type="text" ng-model="user.job">
+                </md-input-container>
+              </div>
+
+              <div class="row" ng-hide="login">
+                <md-button class="md-raised" ng-click="loginUser()" ng-hide="varB"  ng-disabled="user.username==null || user.password==null "> Login </md-button>
+                <md-button class="md-raised" ng-click="varB = true" ng-hide="varB"> New User</md-button>
+                <md-button class="md-raised" ng-if="varB" ng-click="createUser()" ng-disabled="user.username==null || user.email==null || user.firstname==null || user.lastname==null || user.password==null || user.password!=user.confirmPassword"> Create User </md-button>
+              </div>
+              <div class="row" ng-if="login">
+                <h3> User Details </h3>
+              </div>
+
+
+              <div layout-gt-sm="row" ng-if="login">
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="username2">Username</label>
+                  <input ng-disabled="true" id="username2" name="username2" minlength="4" maxlength="8" type="text" ng-model="user.username" ng-pattern="/^[A-Za-z]{4}$/" required />
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="password2">Password</label>
+                  <input ng-disabled="varD" id="password2" name="password2" type="password" ng-model="user.password" ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/" required>
+                  <div ng-messages="projectForm.password2.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character:
+                    </div>
+                  </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="confirmPassword2">{{user.password==user.confirmPassword?"Passwords Match":"Passwords Dont Match"}} *</label>
+                  <input ng-disabled="varD" id="confirmPassword2" name="confirmPassword2" type="password" ng-model="user.confirmPassword" required>
+                </md-input-container>
+              </div>
+
+
+
+              <div layout-gt-sm="row" ng-if="login">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="firstname2">Firstname *</label>
+                  <input ng-disabled="varD" id="firstname2" name="firstname2" type="text" ng-model="user.firstname" ng-pattern="/^([A-Za-z\s]{1,20})$/" required />
+                  <div ng-messages="projectForm.firstname2.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      First name is required and can only contain characters and must be anywhere between 1 and 20 in length
+                    </div>
+                  </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="lastname2">Lastname *</label>
+                  <input ng-disabled="varD" id="lastname2" name="lastname2" type="text" ng-model="user.lastname" ng-pattern="/^([A-Za-z\s]{1,20})$/" required />
+                  <div ng-messages="projectForm.lastname2.$error" md-auto-hide="true">
+                    <div ng-message-exp="['required', 'minlength', 'pattern']">
+                      Last name is required and can only contain characters and must be anywhere between 1 and 20 in length
+                    </div>
+                  </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="email2">Email</label>
+                  <input ng-disabled="varD" required type="email" id="email2" name="email2" ng-model="user.email"
+                         minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+                   <div ng-messages="projectForm.email2.$error" md-auto-hide="true">
+                     <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                       Your email must be between 10 and 100 characters long and look like an e-mail address.
+                     </div>
+                   </div>
+                </md-input-container>
+
+              </div>
+
+              <div layout-gt-sm="row" ng-if="login">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="street-address">Address</label>
+                  <input ng-disabled="varD" ng-model="user.address" id="street-address" name="street-address"/>
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label for="city">City</label>
+                  <input ng-disabled="varD" ng-model="user.city" id="city" name="city"/>
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label for="state">State</label>
+                  <input ng-disabled="varD" list="eventstate" id="state" name="state" ng-model="user.state"/>
+                  <datalist id="eventstate">
+                    <option data-ng-repeat="state in states" value="{{state.abbrev}}">
+                  </datalist>
+                </md-input-container>
+              </div>
+
+              <div layout-gt-sm="row" ng-if="login">
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="phone2">Phone Number</label>
+                  <input ng-disabled="varD" id="phone2" name="phone2" type="tel" ng-model="user.phone" ng-pattern="/^[1-9][0-9]{0,2}-[0-9]{3}-[0-9]{4}$/">
+                  <div ng-messages="projectForm.phone2.$error" md-auto-hide="true">
+                    <div ng-message="pattern">
+                      Phone number must be xxx-xxx-xxxx
+                    </div>
+                  </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="dateofbirth">Birthday(Only Month and Date matters)</label>
+                  <input ng-disabled="varD" id="dateofbirth" type="date" ng-model="user.dateofbirth">
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="employer">Employer</label>
+                  <input ng-disabled="varD" id="employer" type="text" ng-model="user.employer">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="job">Job Title</label>
+                  <input ng-disabled="varD" id="job" type="text" ng-model="user.job">
+                </md-input-container>
+              </div>
+
+              <div class="row" ng-if="login">
+                <md-button class="md-raised" ng-click="updateClick()" ng-if="varD==true"> Update </md-button>
+                <md-button class="md-raised" ng-click="createUser()" ng-if="varE==true" ng-disabled="user.username==null || user.email==null || user.firstname==null || user.lastname==null || user.password==null || user.password!=user.confirmPassword"> Commit </md-button>
+                <md-button class="md-raised" ng-click="logoutUser()"> Logout </md-button>
+              </div>
+            </form>
+            </md-content>
+        </md-tab>
+
+        <md-tab label="{{tabHeading2}}" ng-disabled="tab2Disabled">
+          <md-content class="md-padding">
+            <div class="row">
+              <h3> Welcome {{user.firstname}}</h3>
+            </div>
+
+            <form name="eventForm">
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="eventname">Event Name *</label>
+                  <input focus-if="selectedIndex == 1" focus-delay="500" id="eventname" name="eventname" type="text" ng-model="myevent.eventname" required />
+                  <div ng-messages="eventForm.eventname.$error" md-auto-hide="true">
+                    <div ng-message="required">
+                      Event Name is required
+                    </div>
+                  </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="eventhost">Event Host *</label>
+                  <input id="eventhost" name="eventhost" type="text" ng-model="myevent.eventhost" required />
+                  <div ng-messages="eventForm.eventhost.$error" md-auto-hide="true">
+                    <div ng-message="required">
+                      Event Host is required
+                    </div>
+                  </div>
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label for="eventtypes">Event Type *</label>
+                <input list="eventtypes" id="eventtype" name="eventtype" ng-model="myevent.eventtype" required />
+                <datalist id="eventtypes">
+                  <option data-ng-repeat="event in eventtypes" value="{{event}}">
+                </datalist>
+                <div ng-messages="eventForm.eventtype.$error" md-auto-hide="true">
+                  <div ng-message="required">
+                    Event Type is required
+                  </div>
+                </div>
+              </md-input-container>
+
+              <md-input-container class="md-block" flex-gt-sm>
+                <label for="sdatetime">Event Start Date *</label>
+                <input type="datetime-local" id="sdatetime" name="sdatetime" ng-model="myevent.sdatetime" ng-blur="checksDate(myevent.sdatetime)" required />
+              </md-input-container>
+
+              <md-input-container class="md-block" flex-gt-sm>
+                <label for="edatetime">Event End Date *</label>
+                <input type="datetime-local" id="edatetime" name="edatetime" ng-model="myevent.edatetime" ng-blur="checkeDate(myevent.edatetime)" required />
+              </md-input-container>
+            </div>
+              <md-input-container class="md-block">
+                <label for="guestlist">Guest List</label>
+                <md-chips ng-model="myevent.guestlist" id="guestlist" name="guestlist" readonly="false" required />
+                  <md-chip-template>
+                    <strong>{{$chip}}</strong>
+                  </md-chip-template>
+                </md-chips>
+                <div ng-messages="eventForm.guestlist.$error" md-auto-hide="true">
+                  <div ng-message="required">
+                    Guest List is required
+                  </div>
+                </div>
+              </md-input-container>
+              <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label for="address">Address</label>
+                <input ng-model="myevent.address" id="address" name="address" required/>
+                <div ng-messages="eventForm.address.$error" md-auto-hide="true">
+                  <div ng-message="required">
+                    Street Address is required
+                  </div>
+                </div>
+              </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="city">City</label>
+                  <input ng-model="myevent.city" id="city" name="city" required/>
+                  <div ng-messages="eventForm.city.$error" md-auto-hide="true">
+                    <div ng-message="required">
+                      City is required
+                    </div>
+                  </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label for="state">State</label>
+                  <input list="eventstate" id="state" name="state" ng-model="myevent.state" required/>
+                  <datalist id="eventstate">
+                    <option data-ng-repeat="state in states" value="{{state.abbrev}}">
+                  </datalist>
+                  <div ng-messages="eventForm.state.$error" md-auto-hide="true">
+                    <div ng-message="required">
+                      State is required
+                    </div>
+                  </div>
+                </md-input-container>
+
+              </div>
+              <md-input-container class="md-block">
+                <label for="comments">Additional Comments</label>
+                <textarea id="comments" name="comments" ng-model="myevent.notes" md-maxlength="150" rows="5" md-select-on-focus></textarea>
+              </md-input-container>
+
+              <div class="row">
+                <md-button class="md-raised" ng-click="createEvent(myevent)" ng-disabled="edateflag==false || sdateflag==false || myevent.state==null || myevent.city==null || myevent.address==null || myevent.eventname==null || myevent.eventhost==null || myevent.guestlist==null || myevent.sdatetime==null || myevent.sdatetime==null"> {{tabHeading2}} </md-button>
+              </div>
+            </form>
+          </md-content>
+        </md-tab>
+
+        <md-tab label="{{tabHeading3}}" ng-disabled="tab2Disabled">
+          <md-content class="md-padding">
+            <div class="row">
+              <h3> Welcome {{user.firstname}}</h3>
+            </div>
+            <div ng-show="showCard">
+              <md-card>
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">Name : {{showEvent.eventname}}</span>
+                  </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                  <br>
+                  <div class="row">
+                      Type : {{showEvent.eventtype}}
+                  </div>
+                  <div class="row">
+                      Start : {{showEvent.startdate}} at {{showEvent.starttime}}
+                  </div>
+                  <div class="row">
+                      End : {{showEvent.enddate}} at {{showEvent.endtime}}
+                  </div>
+                  <div class="row">
+                      Location : {{showEvent.address}}, {{showEvent.city}}, {{showEvent.state}}
+                  </div>
+                  <div class="row">
+                      Guest : {{showEvent.guestlistJSON}}
+                  </div>
+                  <div class="row">
+                      Notes : {{showEvent.notes}}
+                  </div>
+                </md-card-content>
+                <md-card-actions layout="row" layout-align="start center">
+                  <md-button class="md-secondary" ng-click="closeCard()"><i class="material-icons">close</i>
+                    <md-tooltip md-direction="below"> Close </md-tooltip>
+                  </md-button>
+                  <md-button class="md-secondary" ng-click="editCard(showEvent)"><i class="material-icons">edit</i>
+                    <md-tooltip md-direction="below"> Edit </md-tooltip>
+                  </md-button>
+                  <md-button class="md-secondary" ng-click="deleteCard(showEvent)"><i class="material-icons">delete</i>
+                    <md-tooltip md-direction="below"> Delete </md-tooltip>
+                  </md-button>
+                </md-card-actions>
+              </md-card>
+            </div>
+            <md-list ng-cloak>
+              <md-list-item class="secondary-button-padding" ng-click="openCard(eventItem)" ng-repeat="eventItem in myevents">
+                <p>{{eventItem.eventname}} on {{eventItem.startdate}} at {{eventItem.starttime}}</p>
+              </md-list-item>
+            </md-list>
+            </md-content>
+        </md-tab>
+
+    </md-tabs>
+  </md-content>
+
+</body>
+</html>
+
+<!--
+Copyright 2016 Google Inc. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that can be in foundin the LICENSE file at http://material.angularjs.org/license.
+-->
