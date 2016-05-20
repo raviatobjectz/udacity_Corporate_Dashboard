@@ -25,7 +25,6 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParam
     $scope.pageHeading = "Issue Dashboard";
     $scope.selectedMenu = 4;
     $scope.showDataView();
-    $interval($scope.showDataView, 1000);
   };
   $scope.map == null;
   $scope.company = {};
