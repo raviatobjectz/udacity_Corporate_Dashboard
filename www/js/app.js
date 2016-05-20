@@ -1,8 +1,10 @@
 var app=angular.module('CorporateDashboard', ['ngMaterial', 'ngMessages']);
 
 app.controller('allTabs', function($scope, $timeout, $interval, $q) {
+
   $scope.pageHeading = "Corporate Dashboard Home";
   $scope.selectedMenu = 1;
+  google.charts.load('current', {packages: ['corechart', 'bar']});
   $scope.homeView = function() {
     $scope.pageHeading = "Corporate Dashboard Home";
     $scope.selectedMenu = 1;
@@ -11,12 +13,13 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
     $scope.pageHeading = "GeoSpatial Employee Counts Dashboard";
     $scope.selectedMenu = 2;
     $timeout($scope.drawMap, 100);
-    //$interval($scope.drawMap, 1000);
+    $interval($scope.drawMap, 5000);
   };
   $scope.metricsView = function() {
     $scope.pageHeading = "Key Metrics Dashboard";
     $scope.selectedMenu = 3;
     $timeout($scope.readCSV, 100);
+    $interval($scope.readCSV, 1000);    
   };
   $scope.dataView = function() {
     $scope.pageHeading = "Data View Dashboard";
@@ -24,13 +27,12 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
   };
   $scope.map == null;
   $scope.company = {};
+  $scope.customers = new Array();
 
   $scope.drawMap = function() {
     $.getScript("data/employee.json")
       .done(function() {
           $scope.company = companyVar;
-          alert($scope.company);
-          alert($scope.company.employees);
           if ($scope.map == null) {
             $scope.map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 1,
@@ -66,9 +68,30 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
   $scope.closedIssues = [];
   $scope.openIssuesCount = 0;
 
+  var month = new Array();
+  month[0] = "January";
+  month[1] = "February";
+  month[2] = "March";
+  month[3] = "April";
+  month[4] = "May";
+  
+  var issueCounts = new Array();
+  var customerCounts = new Array();
+  
+  for (var k = 0; k < month.length; k++) {
+    issueCounts[month[k]] = 0;
+    customerCounts[month[k]] = 0;
+  }
+
   $scope.readCSV = function() {
+    //$scope.openIssuesCount = 0;
     $scope.openIssues = [];
     $scope.closedIssues = [];
+    for (var k = 0; k < month.length; k++) {
+      issueCounts[month[k]] = 0;
+      customerCounts[month[k]] = 0;
+    }
+
     $.ajax({
         type: "GET",
         url: "data/issues.csv",
@@ -77,6 +100,8 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
           var lines = data.split("\n");
           for (var i = 1; i < lines.length; i++) {
             var columns = lines[i].split(',');
+            var d = new Date(columns[2]);
+            issueCounts[month[d.getMonth()]] = issueCounts[month[d.getMonth()]] + 1;
             if (columns[3] == ' open') {
               $scope.openIssues.push(lines[i])
             } 
@@ -85,10 +110,84 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
             }            
           }
           $scope.openIssuesCount = $scope.openIssues.length;
-          //$scope.$apply();
-
+          $scope.drawBarChart();
         }
-     });
+    });
+
+    $.getScript("data/customer.json").done(function() {
+        $scope.customers = customerVar;
+        for(var a = 0; a < $scope.customers.length; a++) {
+          if ($scope.customers[a].Paying == 'YES') {
+            var d1 = new Date($scope.customers[a].Customer_From);
+            customerCounts[month[d1.getMonth()]] = customerCounts[month[d1.getMonth()]] + 1;
+          }
+        }
+        $scope.drawLineChart();
+    });
   }
+
+  $scope.drawBarChart = function() {
+      $scope.data = new google.visualization.DataTable();
+      $scope.data.addColumn('string', 'Month');
+      $scope.data.addColumn('number', 'Issue Count');
+      
+      $scope.data.addRows([
+        [month[0], issueCounts[month[0]]],
+        [month[1], issueCounts[month[1]]],
+        [month[2], issueCounts[month[2]]],
+        [month[3], issueCounts[month[3]]],
+        [month[4], issueCounts[month[4]]]
+      ]);
+
+      $scope.options = {
+        title: 'Issues over Time',
+        hAxis: {
+          title: '2016 Issues',
+        },
+        vAxis: {
+          title: '# of issues'
+        }
+      };
+      $scope.chart = new google.visualization.ColumnChart(
+        document.getElementById('chart_div'));
+      $scope.chart.draw($scope.data, $scope.options);
+  }
+
+  $scope.drawLineChart = function() {
+      $scope.data = new google.visualization.DataTable();
+      $scope.data.addColumn('string', 'Month');
+      $scope.data.addColumn('number', 'Customer Count');
+      
+      /*$scope.data.addRows([
+        [month[0], customerCounts[month[0]]],
+        [month[1], customerCounts[month[1]] + customerCounts[month[0]]],
+        [month[2], customerCounts[month[1]] + customerCounts[month[0]] + customerCounts[month[2]]],
+        [month[3], customerCounts[month[1]] + customerCounts[month[0]] + customerCounts[month[2]] + customerCounts[month[3]]],
+        [month[4], customerCounts[month[1]] + customerCounts[month[0]] + customerCounts[month[2]] + customerCounts[month[3]] + customerCounts[month[4]]]
+      ]);*/
+
+      $scope.data.addRows([
+        [month[0], customerCounts[month[0]]],
+        [month[1], customerCounts[month[1]]],
+        [month[2], customerCounts[month[2]]],
+        [month[3], customerCounts[month[3]]],
+        [month[4], customerCounts[month[4]]]
+      ]);
+
+      $scope.options = {
+        title: 'Paying Customers Over Time',
+        curveType: 'function',
+        hAxis: {
+          title: '2016 Paying Customers',
+        },
+        vAxis: {
+          title: '# of Paying Costomers'
+        }
+      };
+      $scope.chart = new google.visualization.LineChart(
+        document.getElementById('chart_line'));
+      $scope.chart.draw($scope.data, $scope.options);
+  }
+
       
 });

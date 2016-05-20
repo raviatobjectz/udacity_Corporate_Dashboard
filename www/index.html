@@ -6,6 +6,7 @@
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.7/angular-material.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
@@ -14,6 +15,8 @@
     <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
     <script type="text/javascript" src="libs/markerclusterer.js"></script>
     <script type="text/javascript" src="libs/jquery-2.2.3.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script src="js/app.js"></script>
     <title>Corporate Dashboard</title>
     <style>
@@ -85,7 +88,32 @@
         <div id="map-container"><div id="map"></div></div>
       </div>
       <div ng-show="selectedMenu==3">
-        <p> Metrics - Open Issues {{openIssuesCount}}
+        <div flex-xs flex-gt-xs="50" layout="column">
+          <md-card>
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline">Open Issues = {{openIssuesCount}}</span>
+              </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+              <span flex></span>
+              <br>
+            </md-card-content>
+          </md-card>
+
+          <md-card>
+            <md-card-content>
+              <div id="chart_div"></div>
+            </md-card-content>
+          </md-card>
+
+          <md-card>
+            <md-card-content>
+              <div id="chart_line"></div>
+            </md-card-content>
+          </md-card>
+
+        </div>
       </div>
       <div ng-show="selectedMenu==4">
         <p> Data
