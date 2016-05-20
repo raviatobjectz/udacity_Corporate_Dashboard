@@ -1,14 +1,14 @@
-var app=angular.module('CorporateDashboard', ['ngMaterial', 'ngMessages']);
+var app=angular.module('CorporateDashboard', ['ngTable', 'ngMaterial', 'ngMessages']);
 
-app.controller('allTabs', function($scope, $timeout, $interval, $q) {
+app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParams) {
 
-  $scope.pageHeading = "Corporate Dashboard Home";
+  $scope.pageHeading = "XYZ Corporate Dashboard";
   $scope.selectedMenu = 1;
   google.charts.load('current', {packages: ['corechart', 'bar']});
   $scope.homeView = function() {
-    $scope.pageHeading = "Corporate Dashboard Home";
+    $scope.pageHeading = "XYZ Corporate Dashboard";
     $scope.selectedMenu = 1;
-  };
+   };
   $scope.geoView = function() {
     $scope.pageHeading = "GeoSpatial Employee Counts Dashboard";
     $scope.selectedMenu = 2;
@@ -22,8 +22,10 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
     $interval($scope.readCSV, 1000);    
   };
   $scope.dataView = function() {
-    $scope.pageHeading = "Data View Dashboard";
+    $scope.pageHeading = "Issue Dashboard";
     $scope.selectedMenu = 4;
+    $scope.showDataView();
+    $interval($scope.showDataView, 1000);
   };
   $scope.map == null;
   $scope.company = {};
@@ -157,15 +159,6 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
       $scope.data = new google.visualization.DataTable();
       $scope.data.addColumn('string', 'Month');
       $scope.data.addColumn('number', 'Customer Count');
-      
-      /*$scope.data.addRows([
-        [month[0], customerCounts[month[0]]],
-        [month[1], customerCounts[month[1]] + customerCounts[month[0]]],
-        [month[2], customerCounts[month[1]] + customerCounts[month[0]] + customerCounts[month[2]]],
-        [month[3], customerCounts[month[1]] + customerCounts[month[0]] + customerCounts[month[2]] + customerCounts[month[3]]],
-        [month[4], customerCounts[month[1]] + customerCounts[month[0]] + customerCounts[month[2]] + customerCounts[month[3]] + customerCounts[month[4]]]
-      ]);*/
-
       $scope.data.addRows([
         [month[0], customerCounts[month[0]]],
         [month[1], customerCounts[month[1]]],
@@ -188,6 +181,35 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q) {
         document.getElementById('chart_line'));
       $scope.chart.draw($scope.data, $scope.options);
   }
+
+  $scope.showDataView = function() {
+    //alert("I am here");
+    $.ajax({
+      type: "GET",
+      url: "data/issues.csv",
+      dataType: "text",
+      success: function(fileData) {
+        var lines = fileData.split("\n");
+        var data = [];
+        for (var b = 1; b < lines.length; b++) {
+          var columns = lines[b].split(',');
+          var rowVar = {
+            IssueNumber: parseInt(columns[0]),
+            Description: columns[1],
+            OpenDate: columns[2],
+            Status: columns[3],
+            CloseDate: columns[4]
+          };
+          //alert(rowVar);
+          data.push(rowVar);
+        }
+        $scope.tableParams = new NgTableParams({count: 25}, {dataset: data});
+        $scope.$apply();
+      }
+    });
+  }
+
+
 
       
 });

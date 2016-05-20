@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="icons/planner.ico" />
-    <!-- Angular Material style sheet -->
+    
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.7/angular-material.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
@@ -16,6 +16,9 @@
     <script type="text/javascript" src="libs/markerclusterer.js"></script>
     <script type="text/javascript" src="libs/jquery-2.2.3.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <link rel="stylesheet" href="https://rawgit.com/esvit/ng-table/master/dist/ng-table.min.css">
+    <script src="https://rawgit.com/esvit/ng-table/master/dist/ng-table.min.js"></script>
 
     <script src="js/app.js"></script>
     <title>Corporate Dashboard</title>
@@ -69,7 +72,7 @@
             <md-menu-item>
               <md-button ng-click="dataView($event)">
                 <md-icon>view_list</md-icon>
-                Data View
+                Issue Data View
               </md-button>
             </md-menu-item>                            
           </md-menu-content>
@@ -83,6 +86,11 @@
     </md-toolbar>
     <md-content flex layout-padding>
       <div ng-show="selectedMenu==1">
+          <md-card>
+            <md-card-content>
+              <p> Welcome to XYZ Corporate Dashboard. This site offers a GeoSpatial view of the employees around the globe, a Key Metrics view of the open issues and paid customers and a data view of all issues. Please select a dashboard from the menu in the top.
+            </md-card-content>
+          </md-card>
       </div>
       <div ng-show="selectedMenu==2">
         <div id="map-container"><div id="map"></div></div>
@@ -116,7 +124,20 @@
         </div>
       </div>
       <div ng-show="selectedMenu==4">
-        <p> Data
+        <table ng-table="tableParams" class="table table-bordered table-striped table-condensed">
+            <tr ng-repeat="issue in $data">
+                <td title="'IssueNumber'" filter="{IssueNumber: 'number'}" sortable="'IssueNumber'">
+                    {{issue.IssueNumber}}</td>
+                <td title="'Description'" filter="{Description: 'text'}" sortable="'Description'">
+                    {{issue.Description}}</td>
+                <td title="'Status'" filter="{Status: 'text'}" sortable="'Status'">
+                    {{issue.Status}}</td>    
+                <td title="'OpenDate'" filter="{OpenDate: 'text'}" sortable="'OpenDate'">
+                    {{issue.OpenDate}}</td>    
+                <td title="'CloseDate'" filter="{CloseDate: 'text'}" sortable="'CloseDate'">
+                    {{issue.CloseDate}}</td>                                            
+            </tr>
+        </table>
       </div>      
     </md-content>
   </body>
