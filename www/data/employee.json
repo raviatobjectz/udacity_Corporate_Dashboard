@@ -1,0 +1,21 @@
+var companyVar = {
+	"employees": [
+		{"location": "California, USA", "LAT": "33.683947", "LON":"-117.794694", "Count":"100"},
+		{"location": "California, USA", "LAT": "37.338990", "LON":"-121.883354", "Count":"75"},
+		{"location": "Virginia, USA", "LAT": "37.431573", "LON":"-78.656894", "Count":"100"},
+		{"location": "Florida, USA", "LAT": "27.664827", "LON":"-81.515754", "Count":"30"},
+		{"location": "Oklahoma, USA", "LAT": "35.007752", "LON":"-97.092877", "Count":"32"},
+		{"location": "Texas, USA", "LAT": "31.968599", "LON":"-99.901813", "Count":"40"},
+		{"location": "Arizona, USA", "LAT": "34.048928", "LON":"-111.093731", "Count":"42"},
+		{"location": "Kansas, USA", "LAT": "39.011902", "LON":"-98.484246", "Count":"10"},
+		{"location": "Washington, USA", "LAT": "47.606209", "LON":"-122.332071", "Count":"12"},
+		{"location": "Ontario, Canada", "LAT": "51.253775", "LON":"-85.323214", "Count":"42"},
+		{"location": "London, UK", "LAT": "51.507351", "LON":"-0.127758", "Count":"82"},
+		{"location": "Berlin, Germany", "LAT": "52.520007", "LON":"13.404954", "Count":"65"},
+		{"location": "Chennai, India", "LAT": "13.082680", "LON":"80.270718", "Count":"122"},
+		{"location": "Hyderabad, India", "LAT": "17.385044", "LON":"78.486671", "Count":"5"},
+		{"location": "Bangalore, India", "LAT": "12.971599", "LON":"77.594563", "Count":"22"},
+		{"location": "Delhi, India", "LAT": "28.613939", "LON":"77.209021", "Count":"37"},
+		{"location": "Bombay, India", "LAT": "19.075984", "LON":"72.877656", "Count":"69"},
+	]
+};
