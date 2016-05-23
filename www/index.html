@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-touch.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
@@ -16,13 +17,13 @@
     <script type="text/javascript" src="libs/markerclusterer.js"></script>
     <script type="text/javascript" src="libs/jquery-2.2.3.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    
-    <link rel="stylesheet" href="https://rawgit.com/esvit/ng-table/master/dist/ng-table.min.css">
-    <script src="https://rawgit.com/esvit/ng-table/master/dist/ng-table.min.js"></script>
 
+    <script type="text/javascript" src="libs/smart-table.min.js"></script>
+    
     <script src="js/app.js"></script>
     <title>Corporate Dashboard</title>
     <style>
+
     #map-container {
       padding: 6px;
       border-width: 1px;
@@ -40,6 +41,13 @@
     }
     input, textarea, body {
       max-width:100%
+    }
+    .st-sort-ascent:before{
+      content: '\25B2';
+    }
+
+    .st-sort-descent:before{
+      content: '\25BC';
     }
     </style>
   </head>
@@ -124,19 +132,42 @@
         </div>
       </div>
       <div ng-show="selectedMenu==4">
-        <table ng-table="tableParams" class="table table-bordered table-striped table-condensed">
-            <tr ng-repeat="issue in $data">
-                <td title="'IssueNumber'" filter="{IssueNumber: 'number'}" sortable="'IssueNumber'">
-                    {{issue.IssueNumber}}</td>
-                <td title="'Description'" filter="{Description: 'text'}" sortable="'Description'">
-                    {{issue.Description}}</td>
-                <td title="'Status'" filter="{Status: 'text'}" sortable="'Status'">
-                    {{issue.Status}}</td>    
-                <td title="'OpenDate'" filter="{OpenDate: 'text'}" sortable="'OpenDate'">
-                    {{issue.OpenDate}}</td>    
-                <td title="'CloseDate'" filter="{CloseDate: 'text'}" sortable="'CloseDate'">
-                    {{issue.CloseDate}}</td>                                            
-            </tr>
+        <table id="mytab" border="1" style="width:50%" st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped">
+          <thead>
+          <tr>
+            <th st-sort="IssueNumber">Issue</th>
+            <th st-sort="Description">Description</th>
+            <th st-sort="Company">Company</th>
+            <th st-sort="Email">Email</th>
+            <th st-sort="Open">Opened On</th>
+            <th st-sort="Status">Status</th>
+            <th st-sort="Close">Closed On</th>
+            <th st-sort="Employee">Employee</th>                                    
+          </tr>
+          <tr>
+             <th> <input st-search="IssueNumber" placeholder="Filter" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Description" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Company" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Email" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Open" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Status" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Close" class="input-sm form-control" type="search"/> </th>
+             <th> <input st-search="Employee" class="input-sm form-control" type="search"/> </th>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="row in displayedCollection">
+            <td>{{row.IssueNumber}}</td>
+            <td>{{row.Description}}</td>
+            <td>{{row.Company}}</td>
+            <td><a ng-href="mailto:{{row.Email}}">{{row.Email}}</a>
+            <td>{{row.Open}}</td>
+            <td>{{row.Status}}</td>
+            <td>{{row.Close}}</td>
+            <td>{{row.Employee}}</td>
+          </tr>
+          </tbody>
         </table>
       </div>      
     </md-content>

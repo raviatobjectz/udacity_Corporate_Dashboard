@@ -1,18 +1,18 @@
-issue_number, issue_desc, issue_open_date, issue_status, issue_close_date
-1, my issue 1, 01/01/2016, open, open
-2, issue 2, 01/05/2016, open, open
-3, issue 3, 01/10/2016, closed, 03/10/2016
-4, issue 4, 01/01/2016, open, open
-5, issue 5, 02/05/2016, closed, 03/10/2016
-6, issue 6, 02/10/2016, closed, 03/10/2016
-7, issue 7, 03/01/2016, open, open
-8, issue 8, 03/05/2016, open, open
-9, issue 9, 03/10/2016, open, open
-10, issue 10, 04/01/2016, open, open
-11, issue 11, 02/05/2016, open, open
-12, issue 12, 04/10/2016, open, 05/10/2015
-13, issue 13, 05/01/2016, closed, open
-14, issue 14, 05/05/2016, open, open
-15, issue 15, 05/06/2016, closed, 05/10/2015
-16, issue 16, 05/06/2016, open, 05/10/2015
-17, issue 17, 05/06/2016, open, 05/10/2015
+issue_number, issue_desc, company_name, company_email, issue_open_date, issue_status, issue_close_date, employee_name
+1, my issue , California, california@usa.com, 01/01/2016, closed, closed, Alexa
+2, issue 2, Texas, texas@usa.com, 01/05/2016, open, open, Cortana
+3, issue 3, Oklahoma, oklahoma@usa.com, 01/10/2016, closed, 03/10/2016, Siri
+4, issue 4, Virginia, virginia@usa.com, 01/01/2016, open, open, Alexa
+5, issue 5, California, california@usa.com, 02/05/2016, closed, 03/10/2016, Alexa
+6, issue 6, Texas, texas@usa.com, 02/10/2016, closed, 03/10/2016, Cortana
+7, issue 7, Oklahoma, oklahoma@usa.com, 03/01/2016, open, open, Siri
+8, issue 8, Virginia, virginia@usa.com, 03/05/2016, open, open, Alexa
+9, issue 9, Maryland, maryland@usa.com, 03/10/2016, open, open, Cortana
+10, issue 10, Utah, utah@usa.com, 04/01/2016, open, open, Siri
+11, issue 11, California, california@usa.com, 02/05/2016, open, open, Alexa
+12, issue 12, Texas, texas@usa.com, 04/10/2016, open, 05/10/2015, Cortana
+13, issue 13, Oklahoma, oklahoma@usa.com, 05/01/2016, closed, open, Siri
+14, issue 14, Virginia, virginia@usa.com, 05/05/2016, open, open, Alexa
+15, issue 15, Oklahoma, oklahoma@usa.com, 05/06/2016, closed, 05/10/2015, Cortana
+16, issue 16, California, california@usa.com, 05/06/2016, open, 05/10/2015, Siri
+17, issue 17, Texas, texas@usa.com, 05/06/2016, open, 05/10/2015, Siri

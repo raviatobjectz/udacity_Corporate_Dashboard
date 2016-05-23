@@ -1,6 +1,6 @@
-var app=angular.module('CorporateDashboard', ['ngTable', 'ngMaterial', 'ngMessages']);
+var app=angular.module('CorporateDashboard', ['ngMaterial', 'ngMessages', 'smart-table']);
 
-app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParams) {
+app.controller('allTabs', function($scope, $timeout, $interval, $q, $filter) {
 
   $scope.pageHeading = "XYZ Corporate Dashboard";
   $scope.selectedMenu = 1;
@@ -25,6 +25,7 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParam
     $scope.pageHeading = "Issue Dashboard";
     $scope.selectedMenu = 4;
     $scope.showDataView();
+    $interval($scope.showDataView, 1000);
   };
   $scope.map == null;
   $scope.company = {};
@@ -97,16 +98,16 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParam
         type: "GET",
         url: "data/issues.csv",
         dataType: "text",
-        success: function(data) {
-          var lines = data.split("\n");
+        success: function(idata) {
+          var lines = idata.split("\n");
           for (var i = 1; i < lines.length; i++) {
             var columns = lines[i].split(',');
-            var d = new Date(columns[2]);
+            var d = new Date(columns[4]);
             issueCounts[month[d.getMonth()]] = issueCounts[month[d.getMonth()]] + 1;
-            if (columns[3] == ' open') {
+            if (columns[5] == ' open') {
               $scope.openIssues.push(lines[i])
             } 
-            if (columns[3] == ' closed') {
+            if (columns[5] == ' closed') {
               $scope.closedIssues.push(lines[i])
             }            
           }
@@ -128,11 +129,11 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParam
   }
 
   $scope.drawBarChart = function() {
-      $scope.data = new google.visualization.DataTable();
-      $scope.data.addColumn('string', 'Month');
-      $scope.data.addColumn('number', 'Issue Count');
+      $scope.data1 = new google.visualization.DataTable();
+      $scope.data1.addColumn('string', 'Month');
+      $scope.data1.addColumn('number', 'Issue Count');
       
-      $scope.data.addRows([
+      $scope.data1.addRows([
         [month[0], issueCounts[month[0]]],
         [month[1], issueCounts[month[1]]],
         [month[2], issueCounts[month[2]]],
@@ -151,14 +152,14 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParam
       };
       $scope.chart = new google.visualization.ColumnChart(
         document.getElementById('chart_div'));
-      $scope.chart.draw($scope.data, $scope.options);
+      $scope.chart.draw($scope.data1, $scope.options);
   }
 
   $scope.drawLineChart = function() {
-      $scope.data = new google.visualization.DataTable();
-      $scope.data.addColumn('string', 'Month');
-      $scope.data.addColumn('number', 'Customer Count');
-      $scope.data.addRows([
+      $scope.data2 = new google.visualization.DataTable();
+      $scope.data2.addColumn('string', 'Month');
+      $scope.data2.addColumn('number', 'Customer Count');
+      $scope.data2.addRows([
         [month[0], customerCounts[month[0]]],
         [month[1], customerCounts[month[1]]],
         [month[2], customerCounts[month[2]]],
@@ -178,35 +179,43 @@ app.controller('allTabs', function($scope, $timeout, $interval, $q, NgTableParam
       };
       $scope.chart = new google.visualization.LineChart(
         document.getElementById('chart_line'));
-      $scope.chart.draw($scope.data, $scope.options);
+      $scope.chart.draw($scope.data2, $scope.options);
   }
 
-  $scope.showDataView = function() {
-    //alert("I am here");
-    $.ajax({
-      type: "GET",
-      url: "data/issues.csv",
-      dataType: "text",
-      success: function(fileData) {
-        var lines = fileData.split("\n");
-        var data = [];
-        for (var b = 1; b < lines.length; b++) {
-          var columns = lines[b].split(',');
-          var rowVar = {
-            IssueNumber: parseInt(columns[0]),
-            Description: columns[1],
-            OpenDate: columns[2],
-            Status: columns[3],
-            CloseDate: columns[4]
-          };
-          //alert(rowVar);
-          data.push(rowVar);
-        }
-        $scope.tableParams = new NgTableParams({count: 25}, {dataset: data});
-        $scope.$apply();
+
+$scope.rowCollection = [];
+
+
+$scope.showDataView = function() {
+  $.ajax({
+    type: "GET",
+    url: "data/issues.csv",
+    dataType: "text",
+    success: function(fileData) {
+      var lines = fileData.split("\n");
+      $scope.rowCollection = [];        
+      for (var b = 1; b < lines.length; b++) {
+        var columns = lines[b].split(',');
+        var rowVar = {
+          IssueNumber: parseInt(columns[0]),
+          Description: columns[1],
+          Company: columns[2],
+          Email: columns[3],
+          Open: columns[4],
+          Status: columns[5],
+          Close: columns[6],
+          Employee: columns[7]
+        };
+        $scope.rowCollection.push(rowVar);
       }
-    });
-  }
+      $scope.$apply();
+    }
+  });
+}
+
+  
+
+
 
 
 
